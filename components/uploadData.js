@@ -42,3 +42,29 @@ export async function fetchProducts(
 
   return res.json();
 }
+
+/**
+ * Fetches product details data from the e-commerce API.
+ *
+ * @async
+ * @function fetchProduct
+ * @param {string | number} id - The unique identifier of the product to fetch.
+ * @returns {Promise<Object>} A promise that resolves to the product data.
+ * @throws {Error} Throws an error if the response is not OK.
+ *
+ */
+export async function fetchSingleProduct(id) {
+  const res = await fetch(
+    `https://next-ecommerce-api.vercel.app/products/${id}`,
+    {
+      cache: "force-cache",
+      next: { revalidate: 1800 },
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch products.");
+  }
+
+  return res.json();
+}

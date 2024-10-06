@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import { ImageGallery } from "@/components/ImageGallery";
 import { ReviewsSort } from "@/components/SortReviews";
+import { fetchSingleProduct } from "@/components/uploadData";
 
 /**
  * Dynamically imports the BackButton component.
@@ -14,32 +15,6 @@ import { ReviewsSort } from "@/components/SortReviews";
 const BackButton = dynamic(() => import("@/components/BackButton"), {
   ssr: false,
 });
-
-/**
- * Fetches product details data from the e-commerce API.
- *
- * @async
- * @function fetchProduct
- * @param {string | number} id - The unique identifier of the product to fetch.
- * @returns {Promise<Object>} A promise that resolves to the product data.
- * @throws {Error} Throws an error if the response is not OK.
- *
- */
-async function fetchProduct(id) {
-  const res = await fetch(
-    `https://next-ecommerce-api.vercel.app/products/${id}`,
-    {
-      cache: "force-cache",
-      next: { revalidate: 1800 },
-    }
-  );
-
-  if (!res.ok) {
-    throw error;
-  }
-
-  return res.json();
-}
 
 /**
  * Renders the product details page.
@@ -63,7 +38,7 @@ export default async function ProductDetails({ params }) {
   let product;
 
   try {
-    product = await fetchProduct(id);
+    product = await fetchSingleProduct(id);
   } catch (error) {
     throw error;
   }
