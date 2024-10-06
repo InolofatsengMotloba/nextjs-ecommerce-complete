@@ -3,30 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaFilter } from "react-icons/fa";
-
-/**
- * Fetches the list of product categories from the API.
- * 
- * The function sends a GET request to the specified API endpoint to retrieve
- * categories. The request is cached with `force-cache`, and the response is
- * revalidated every 1800 seconds (30 minutes). 
- * 
- * @throws {Error} If the response from the API is not successful (i.e., `res.ok` is `false`).
- * 
- * @returns {Promise<Array<string>>} A promise that resolves to an array of categories as strings.
- */
-async function fetchCategories() {
-  const res = await fetch("https://next-ecommerce-api.vercel.app/categories", {
-    cache: "force-cache",
-    next: { revalidate: 1800 },
-  });
-
-  if (!res.ok) {
-    throw error;
-  }
-
-  return res.json();
-}
+import { fetchCategories } from "./uploadData";
 
 /**
  * CategoryFilter component that allows users to filter products by category.

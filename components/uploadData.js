@@ -68,3 +68,27 @@ export async function fetchSingleProduct(id) {
 
   return res.json();
 }
+
+/**
+ * Fetches the list of product categories from the API.
+ *
+ * The function sends a GET request to the specified API endpoint to retrieve
+ * categories. The request is cached with `force-cache`, and the response is
+ * revalidated every 1800 seconds (30 minutes).
+ *
+ * @throws {Error} If the response from the API is not successful (i.e., `res.ok` is `false`).
+ *
+ * @returns {Promise<Array<string>>} A promise that resolves to an array of categories as strings.
+ */
+export async function fetchCategories() {
+  const res = await fetch("https://next-ecommerce-api.vercel.app/categories", {
+    cache: "force-cache",
+    next: { revalidate: 1800 },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch products.");
+  }
+
+  return res.json();
+}
