@@ -4,7 +4,7 @@ import SearchBar from "@/components/SearchBar";
 import { CategoryFilter } from "@/components/FilterProducts";
 import PriceSort from "@/components/SortProducts";
 import ResetButton from "@/components/ResetButton";
-import { fetchProducts } from "@/components/API";
+import { fetchProducts } from "@/api/productsApi";
 
 /**
  * Products component that fetches and displays a list of products based on search parameters.

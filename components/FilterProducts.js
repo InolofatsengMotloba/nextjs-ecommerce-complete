@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaFilter } from "react-icons/fa";
-import { fetchCategories } from "./API";
+import { fetchCategories } from "../api/productsApi";
 
 /**
  * CategoryFilter component that allows users to filter products by category.

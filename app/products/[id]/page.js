@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { ImageGallery } from "@/components/ImageGallery";
 import { ReviewsSort } from "@/components/SortReviews";
-import { fetchSingleProduct } from "@/components/API";
+import { fetchSingleProduct } from "@/api/productsApi";
 
 /**
  * Dynamically imports the BackButton component.
@@ -18,7 +18,7 @@ const BackButton = dynamic(() => import("@/components/BackButton"), {
 
 /**
  * Generates metadata for a product details page based on the product ID.
- * This function fetches the product data and dynamically sets the page title 
+ * This function fetches the product data and dynamically sets the page title
  * and description using the product's information.
  *
  * @async
