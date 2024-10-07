@@ -17,6 +17,36 @@ const BackButton = dynamic(() => import("@/components/BackButton"), {
 });
 
 /**
+ * Generates metadata for a product details page based on the product ID.
+ * This function fetches the product data and dynamically sets the page title 
+ * and description using the product's information.
+ *
+ * @async
+ * @function generateMetadata
+ * @param {Object} params - The parameters object containing the product ID.
+ * @param {string | number} params.id - The unique identifier of the product.
+ * @returns {Promise<Object>} The metadata object containing the page title and description.
+ * @throws {Error} Throws an error if the product data fetch fails.
+ *
+ */
+export async function generateMetadata({ params }) {
+  const { id } = params;
+
+  let product;
+
+  try {
+    product = await fetchSingleProduct(id);
+  } catch (error) {
+    throw error;
+  }
+
+  return {
+    title: `${product.title} - Her Store`,
+    description: product.description,
+  };
+}
+
+/**
  * Renders the product details page.
  *
  * This component fetches the product data based on the provided ID from the params
