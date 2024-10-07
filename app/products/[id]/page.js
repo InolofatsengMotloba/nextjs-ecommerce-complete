@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { ImageGallery } from "@/components/ImageGallery";
 import { ReviewsSort } from "@/components/SortReviews";
-import { fetchSingleProduct } from "@/components/uploadData";
+import { fetchSingleProduct } from "@/components/API";
 
 /**
  * Dynamically imports the BackButton component.

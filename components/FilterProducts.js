@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaFilter } from "react-icons/fa";
-import { fetchCategories } from "./uploadData";
+import { fetchCategories } from "./API";
 
 /**
  * CategoryFilter component that allows users to filter products by category.
- * 
+ *
  * This component provides a dropdown of categories fetched from an API and allows users to filter
  * the products list based on the selected category. The current selected category is synced
  * with the URL query parameters.
- * 
+ *
  * @component
  * @returns {JSX.Element} The rendered category filter component.
  */
