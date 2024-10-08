@@ -19,21 +19,18 @@ export async function fetchProducts(
   search = "",
   category = "",
   sortBy = "id",
-  order = ""
+  order = "",
+  lastVisible = null
 ) {
-  const skip = (page - 1) * 20;
   const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
   const categoryParam = category
     ? `&category=${encodeURIComponent(category)}`
     : "";
   const sortParam = sortBy ? `&sortBy=${sortBy}&order=${order}` : "";
+  const lastVisibleParam = lastVisible ? `&lastVisible=${lastVisible}` : "";
 
   const res = await fetch(
-    `https://next-ecommerce-api.vercel.app/products?limit=20&skip=${skip}${searchParam}${categoryParam}${sortParam}`,
-    {
-      cache: "force-cache",
-      next: { revalidate: 1800 },
-    }
+    `http://localhost:3000/api/products?pageSize=20${searchParam}${categoryParam}${sortParam}${lastVisibleParam}`
   );
 
   if (!res.ok) {

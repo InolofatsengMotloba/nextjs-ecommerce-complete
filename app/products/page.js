@@ -25,17 +25,27 @@ import { fetchProducts } from "@/api/productsApi";
  *
  */
 export default async function Products({ searchParams }) {
-  const page = parseInt(searchParams.page || "1", 10);
-  const search = searchParams.search || "";
-  const category = searchParams.category || "";
-  const sortBy = searchParams.sortBy || "";
-  const order = searchParams.order || "";
+  // const page = parseInt(searchParams.page || "1", 10);
+  // const search = searchParams.search || "";
+  // const category = searchParams.category || "";
+  // const sortBy = searchParams.sortBy || "";
+  // const order = searchParams.order || "";
+  // const lastVisible = searchParams.lastVisible || null;
 
   let products = [];
+  // let newLastVisible = null;
   try {
-    products = await fetchProducts(page, search, category, sortBy, order);
+    const fetchedData = await fetchProducts();
+    // page,
+    // search,
+    // category,
+    // sortBy,
+    // order,
+    // lastVisible
+    products = fetchedData;
+    // newLastVisible = fetchedData.lastVisible;
   } catch (error) {
-    throw error;
+    throw new Error("Failed to fetch products.");
   }
 
   return (
@@ -44,22 +54,22 @@ export default async function Products({ searchParams }) {
         <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
           {/* Search Bar */}
           <div className="w-full md:w-2/3">
-            <SearchBar initialSearch={search} />
+            {/* <SearchBar initialSearch={search} /> */}
           </div>
 
           {/* Filter and Sort */}
-          <div className="flex flex-col md:flex-row gap-4 justify-between w-full md:w-auto">
+          {/* <div className="flex flex-col md:flex-row gap-4 justify-between w-full md:w-auto">
             <div className="w-full md:w-auto">
               <CategoryFilter initialCategory={category} />
             </div>
             <div className="w-full md:w-auto">
               <PriceSort />
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Reset Button */}
-        <ResetButton />
+        {/* <ResetButton /> */}
 
         {/* Product Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
@@ -111,14 +121,15 @@ export default async function Products({ searchParams }) {
         </div>
 
         {/* Pagination */}
-        <Pagination
+        {/* <Pagination
           currentPage={page}
           searchQuery={search}
           category={category}
           products={products}
           sortBy={sortBy}
           order={order}
-        />
+          lastVisible={newLastVisible}
+        /> */}
       </div>
     </div>
   );
@@ -140,46 +151,48 @@ export default async function Products({ searchParams }) {
  * @returns {JSX.Element} The rendered pagination component with navigation buttons.
  *
  */
-function Pagination({
-  currentPage,
-  searchQuery,
-  category,
-  sortBy,
-  order,
-  products,
-}) {
-  const pageNumber = parseInt(currentPage, 10);
-  const prevPage = pageNumber > 1 ? pageNumber - 1 : null;
-  const nextPage = pageNumber + 1;
-  const searchParam = searchQuery
-    ? `&search=${encodeURIComponent(searchQuery)}`
-    : "";
-  const categoryParam = category
-    ? `&category=${encodeURIComponent(category)}`
-    : "";
-  const sortParam = sortBy && order ? `&sortBy=${sortBy}&order=${order}` : "";
+// function Pagination({
+//   currentPage,
+//   searchQuery,
+//   category,
+//   sortBy,
+//   order,
+//   products,
+//   lastVisible,
+// }) {
+//   const pageNumber = parseInt(currentPage, 10);
+//   const prevPage = pageNumber > 1 ? pageNumber - 1 : null;
+//   const nextPage = pageNumber + 1;
+//   const searchParam = searchQuery
+//     ? `&search=${encodeURIComponent(searchQuery)}`
+//     : "";
+//   const categoryParam = category
+//     ? `&category=${encodeURIComponent(category)}`
+//     : "";
+//   const sortParam = sortBy && order ? `&sortBy=${sortBy}&order=${order}` : "";
+//   // const lastVisibleParam = lastVisible ? `&lastVisible=${lastVisible}` : "";
 
-  return (
-    <div className="flex justify-center items-center mt-8 space-x-2">
-      {prevPage && (
-        <Link
-          href={`/products?page=${prevPage}${searchParam}${categoryParam}${sortParam}`}
-        >
-          <button className="px-4 py-2 bg-[#2d7942] text-white rounded-lg hover:bg-[#1d5931] transition-colors duration-300">
-            Previous
-          </button>
-        </Link>
-      )}
-      <span className="text-lg">Page {currentPage}</span>
-      {products.length === 20 && (
-        <Link
-          href={`/products?page=${nextPage}${searchParam}${categoryParam}${sortParam}`}
-        >
-          <button className="px-4 py-2 bg-[#2d7942] text-white rounded-lg hover:bg-[#1d5931] transition-colors duration-300">
-            Next
-          </button>
-        </Link>
-      )}
-    </div>
-  );
-}
+//   return (
+//     <div className="flex justify-center items-center mt-8 space-x-2">
+//       {prevPage && (
+//         <Link
+//           href={`/products?page=${prevPage}${searchParam}${categoryParam}${sortParam}`}
+//         >
+//           <button className="px-4 py-2 bg-[#2d7942] text-white rounded-lg hover:bg-[#1d5931] transition-colors duration-300">
+//             Previous
+//           </button>
+//         </Link>
+//       )}
+//       <span className="text-lg">Page {currentPage}</span>
+//       {products.length === 20 && (
+//         <Link
+//           href={`/products?page=${nextPage}${searchParam}${categoryParam}${sortParam}`}
+//         >
+//           <button className="px-4 py-2 bg-[#2d7942] text-white rounded-lg hover:bg-[#1d5931] transition-colors duration-300">
+//             Next
+//           </button>
+//         </Link>
+//       )}
+//     </div>
+//   );
+// }
