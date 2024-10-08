@@ -1,10 +1,19 @@
 import Link from "next/link";
+import { fetchProducts } from "@/api/productsApi";
 import { SingleImageGallery } from "@/components/ImageGallery";
 import SearchBar from "@/components/SearchBar";
 import { CategoryFilter } from "@/components/FilterProducts";
 import PriceSort from "@/components/SortProducts";
 import ResetButton from "@/components/ResetButton";
-import { fetchProducts } from "@/api/productsApi";
+
+async function getProducts(page) {
+  try {
+    const products = await fetchProducts(page);
+    return products;
+  } catch (error) {
+    throw new Error("Failed to fetch products.");
+  }
+}
 
 /**
  * Products component that fetches and displays a list of products based on search parameters.
@@ -25,28 +34,14 @@ import { fetchProducts } from "@/api/productsApi";
  *
  */
 export default async function Products({ searchParams }) {
-  // const page = parseInt(searchParams.page || "1", 10);
+  const page = Number(searchParams?.page) || 1;
+  const { products, currentPage, totalPages } = await getProducts(page);
+
   // const search = searchParams.search || "";
   // const category = searchParams.category || "";
   // const sortBy = searchParams.sortBy || "";
   // const order = searchParams.order || "";
   // const lastVisible = searchParams.lastVisible || null;
-
-  let products = [];
-  // let newLastVisible = null;
-  try {
-    const fetchedData = await fetchProducts();
-    // page,
-    // search,
-    // category,
-    // sortBy,
-    // order,
-    // lastVisible
-    products = fetchedData;
-    // newLastVisible = fetchedData.lastVisible;
-  } catch (error) {
-    throw new Error("Failed to fetch products.");
-  }
 
   return (
     <div>
@@ -121,15 +116,7 @@ export default async function Products({ searchParams }) {
         </div>
 
         {/* Pagination */}
-        {/* <Pagination
-          currentPage={page}
-          searchQuery={search}
-          category={category}
-          products={products}
-          sortBy={sortBy}
-          order={order}
-          lastVisible={newLastVisible}
-        /> */}
+        <Pagination currentPage={currentPage} totalPages={totalPages} />
       </div>
     </div>
   );
@@ -196,3 +183,56 @@ export default async function Products({ searchParams }) {
 //     </div>
 //   );
 // }
+function Pagination({ currentPage, totalPages }) {
+  const createPageURL = (pageNumber) => {
+    return `/products?page=${pageNumber}`;
+  };
+
+  return (
+    <div className="flex justify-center mt-8">
+      <nav className="inline-flex space-x-1">
+        {/* Previous Button */}
+        <Link
+          href={createPageURL(currentPage - 1)}
+          className={`px-4 py-2 rounded-full bg-[#2d7942] text-white text-sm font-medium transition-colors duration-200 ${
+            currentPage === 1
+              ? "text-gray-300 cursor-not-allowed bg-gray-200"
+              : "hover:bg-[#11752d]"
+          }`}
+          aria-disabled={currentPage === 1}
+        >
+          Previous
+        </Link>
+
+        {/* Page Numbers */}
+        {[...Array(totalPages).keys()].map((page) => (
+          <Link
+            key={page + 1}
+            href={createPageURL(page + 1)}
+            className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors duration-200 ${
+              currentPage === page + 1
+                ? "bg-[#2d7942] text-white border-transparent"
+                : "bg-white text-black border-gray-300 hover:bg-gray-100"
+            }`}
+          >
+            {page + 1}
+          </Link>
+        ))}
+
+        {/* Next Button */}
+        <Link
+          href={createPageURL(currentPage + 1)}
+          className={`px-4 py-2 rounded-full bg-[#2d7942] text-white text-sm font-medium transition-colors duration-200 ${
+            currentPage === totalPages
+              ? "text-gray-300 cursor-not-allowed bg-gray-200"
+              : "hover:bg-[#11752d]"
+          }`}
+          aria-disabled={currentPage === totalPages}
+        >
+          Next
+        </Link>
+      </nav>
+    </div>
+  );
+
+}

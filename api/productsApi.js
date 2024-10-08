@@ -14,24 +14,11 @@
  * @throws {Error} Throws an error if the response is not OK.
  *
  */
-export async function fetchProducts(
-  page = 1,
-  search = "",
-  category = "",
-  sortBy = "id",
-  order = "",
-  lastVisible = null
-) {
-  const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
-  const categoryParam = category
-    ? `&category=${encodeURIComponent(category)}`
-    : "";
-  const sortParam = sortBy ? `&sortBy=${sortBy}&order=${order}` : "";
-  const lastVisibleParam = lastVisible ? `&lastVisible=${lastVisible}` : "";
-
-  const res = await fetch(
-    `http://localhost:3000/api/products?pageSize=20${searchParam}${categoryParam}${sortParam}${lastVisibleParam}`
-  );
+export async function fetchProducts(page = 1) {
+  const res = await fetch(`http://localhost:3000/api/products?page=${page}`, {
+    cache: "force-cache",
+    next: { revalidate: 1800 },
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch products.");
@@ -51,7 +38,10 @@ export async function fetchProducts(
  *
  */
 export async function fetchSingleProduct(id) {
-  const res = await fetch(`http://localhost:3000/api/products/${id}`);
+  const res = await fetch(`http://localhost:3000/api/products/${id}`, {
+    cache: "force-cache",
+    next: { revalidate: 1800 },
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch products.");
