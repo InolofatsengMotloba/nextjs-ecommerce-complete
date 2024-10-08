@@ -38,7 +38,7 @@ export function CategoryFilter() {
     async function loadCategories() {
       try {
         const fetchedCategories = await fetchCategories();
-        setCategories(fetchedCategories);
+        setCategories(fetchedCategories[0].categories);
       } catch (error) {
         throw error;
       }
@@ -69,6 +69,14 @@ export function CategoryFilter() {
     router.push(`/products?${params.toString()}`);
   };
 
+  // let categories = [];
+
+  // try {
+  //   const fetchedCategories = await fetchCategories();
+  //   categories= fetchedCategories[0].categories
+  // } catch (error) {
+  //   throw new Error("Failed to fetch categories.")
+  // }
   return (
     <div className="mb-4">
       <div className="relative flex items-center space-x-2">
