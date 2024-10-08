@@ -32,10 +32,13 @@ const BackButton = dynamic(() => import("@/components/BackButton"), {
 export async function generateMetadata({ params }) {
   const { id } = params;
 
+  // Pad the ID to ensure it is in the correct format
+  const paddedId = id.toString().padStart(3, "0");
+
   let product;
 
   try {
-    product = await fetchSingleProduct(id);
+    product = await fetchSingleProduct(paddedId);
   } catch (error) {
     throw error;
   }
@@ -63,12 +66,14 @@ export async function generateMetadata({ params }) {
  */
 export default async function ProductDetails({ params }) {
   const { id } = params;
-  // const product = await fetchProduct(id);
+
+  // Pad the ID to ensure it is in the correct format
+  const paddedId = id.toString().padStart(3, "0");
 
   let product;
 
   try {
-    product = await fetchSingleProduct(id);
+    product = await fetchSingleProduct(paddedId);
   } catch (error) {
     throw error;
   }

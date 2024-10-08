@@ -51,13 +51,7 @@ export async function fetchProducts(
  *
  */
 export async function fetchSingleProduct(id) {
-  const res = await fetch(
-    `https://next-ecommerce-api.vercel.app/products/${id}`,
-    {
-      cache: "force-cache",
-      next: { revalidate: 1800 },
-    }
-  );
+  const res = await fetch(`http://localhost:3000/api/products/${id}`);
 
   if (!res.ok) {
     throw new Error("Failed to fetch products.");
