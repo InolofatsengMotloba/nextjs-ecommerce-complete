@@ -14,11 +14,20 @@
  * @throws {Error} Throws an error if the response is not OK.
  *
  */
-export async function fetchProducts(page = 1) {
-  const res = await fetch(`http://localhost:3000/api/products?page=${page}`, {
-    cache: "force-cache",
-    next: { revalidate: 1800 },
-  });
+export async function fetchProducts(page = 1, search = "") {
+  
+  const queryParams = new URLSearchParams({ page: page.toString() });
+  if (search) {
+    queryParams.append("search", search);
+  }
+
+  const res = await fetch(
+    `http://localhost:3000/api/products?${queryParams.toString()}`,
+    {
+      cache: "force-cache",
+      next: { revalidate: 1800 },
+    }
+  );
 
   if (!res.ok) {
     throw new Error("Failed to fetch products.");

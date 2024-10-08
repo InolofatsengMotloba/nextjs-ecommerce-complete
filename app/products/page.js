@@ -6,9 +6,9 @@ import { CategoryFilter } from "@/components/FilterProducts";
 import PriceSort from "@/components/SortProducts";
 import ResetButton from "@/components/ResetButton";
 
-async function getProducts(page) {
+async function getProducts(page, search = "") {
   try {
-    const products = await fetchProducts(page);
+    const products = await fetchProducts(page, search);
     return products;
   } catch (error) {
     throw new Error("Failed to fetch products.");
@@ -35,7 +35,8 @@ async function getProducts(page) {
  */
 export default async function Products({ searchParams }) {
   const page = Number(searchParams?.page) || 1;
-  const { products, currentPage, totalPages } = await getProducts(page);
+  const searchQuery = searchParams?.search || ""; // Get the search query from URL
+  const { products, currentPage, totalPages } = await getProducts(page, searchQuery);
 
   // const search = searchParams.search || "";
   // const category = searchParams.category || "";
@@ -49,7 +50,7 @@ export default async function Products({ searchParams }) {
         <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
           {/* Search Bar */}
           <div className="w-full md:w-2/3">
-            {/* <SearchBar initialSearch={search} /> */}
+            <SearchBar initialSearch={searchQuery} />
           </div>
 
           {/* Filter and Sort */}
@@ -116,7 +117,11 @@ export default async function Products({ searchParams }) {
         </div>
 
         {/* Pagination */}
-        <Pagination currentPage={currentPage} totalPages={totalPages} />
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          searchQuery={searchQuery}
+        />
       </div>
     </div>
   );
@@ -183,9 +188,9 @@ export default async function Products({ searchParams }) {
 //     </div>
 //   );
 // }
-function Pagination({ currentPage, totalPages }) {
+function Pagination({ currentPage, totalPages, searchQuery }) {
   const createPageURL = (pageNumber) => {
-    return `/products?page=${pageNumber}`;
+    return `/products?page=${pageNumber}&search=${searchQuery}`;
   };
 
   return (

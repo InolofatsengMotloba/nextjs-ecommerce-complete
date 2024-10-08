@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { FaSearch } from "react-icons/fa"; // Import the search icon from react-icons
 
 /**
@@ -14,19 +14,9 @@ import { FaSearch } from "react-icons/fa"; // Import the search icon from react-
  * @component
  * @returns {JSX.Element} The rendered search bar component.
  */
-export default function SearchBar() {
-  const [searchQuery, setSearchQuery] = useState("");
+export default function SearchBar({ initialSearch }) {
+  const [search, setSearch] = useState(initialSearch || "");
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  /**
-   * Sync the search query state with the URL query parameters on component load.
-   * This effect reads the current search query from the URL and updates the component state.
-   */
-  useEffect(() => {
-    const search = searchParams.get("search") || "";
-    setSearchQuery(search);
-  }, [searchParams]);
 
   /**
    * Handle the form submission for searching.
@@ -37,16 +27,7 @@ export default function SearchBar() {
    */
   const handleSearch = (event) => {
     event.preventDefault();
-
-    // Update the URL search params with the search query
-    const params = new URLSearchParams(searchParams);
-    if (searchQuery) {
-      params.set("search", searchQuery);
-    } else {
-      params.delete("search");
-    }
-    params.set("page", "1"); // Reset to the first page when searching
-    router.push(`/products?${params.toString()}`);
+    router.push(`/products?search=${encodeURIComponent(search)}`);
   };
 
   return (
@@ -56,14 +37,14 @@ export default function SearchBar() {
           <input
             type="text"
             id="search"
-            value={searchQuery}
-            onChange={(event) => setSearchQuery(event.target.value)}
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
             placeholder="Search Products"
             className="flex-grow px-4 py-2 pl-6 text-gray-500 bg-white rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-[#2d7942] transition-all duration-300"
           />
           <button
             type="submit"
-            className="absolute right-0 p-3 bg-[#2d7942] rounded-full text-white shadow-lg hover:bg-[#1d5931] transition-colors duration-300"
+            className="absolute right-0 p-3 bg-[#2d7942] rounded-full text-white  shadow-lg hover:bg-[#1d5931] transition-colors duration-300"
           >
             <FaSearch />
           </button>
