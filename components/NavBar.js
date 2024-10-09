@@ -16,6 +16,8 @@ export default function NavBar() {
   const isActive = (route) =>
     pathname === route ? "text-[#2d7942]" : "text-white";
 
+  const isLogin = false;
+
   return (
     <header className="bg-black text-white py-2 sticky top-0 z-50">
       <div className="container mx-auto px-4 flex items-center justify-between">
@@ -73,16 +75,47 @@ export default function NavBar() {
         </nav>
 
         {/* Login Button */}
-        <div className="hidden md:block">
-          <Link
-            href="/login"
-            className={`py-2 px-4 rounded hover:bg-gray-500 ${isActive(
-              "/login"
-            )}`}
-          >
-            Login
-          </Link>
-        </div>
+        {!isLogin && (
+          <div className="hidden md:block">
+            <Link
+              href="/login"
+              className={`py-2 px-4 rounded hover:bg-gray-500 ${isActive(
+                "/login"
+              )}`}
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className={`py-2 px-4 rounded mr-2 hover:bg-gray-500 ${isActive(
+                "/register"
+              )}`}
+            >
+              Register
+            </Link>
+          </div>
+        )}
+
+        {isLogin && (
+          <div>
+            <Link
+              href="/profile"
+              className={`py-2 px-4 rounded mr-2 hover:bg-gray-500 ${isActive(
+                "/profile"
+              )}`}
+            >
+              Profile
+            </Link>
+            <Link
+              href="/products"
+              className={`py-2 px-4 rounded mr-2 hover:bg-gray-500 ${isActive(
+                "/products"
+              )}`}
+            >
+              Logout
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Mobile Dropdown Menu */}
@@ -111,6 +144,14 @@ export default function NavBar() {
                 className={`text-lg hover:underline ${isActive("/cart")}`}
               >
                 Cart
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/register"
+                className={`text-lg hover:underline ${isActive("/register")}`}
+              >
+                Register
               </Link>
             </li>
             <li>
