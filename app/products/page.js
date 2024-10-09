@@ -6,9 +6,9 @@ import { CategoryFilter } from "@/components/FilterProducts";
 import PriceSort from "@/components/SortProducts";
 import ResetButton from "@/components/ResetButton";
 
-async function getProducts(page, search = "") {
+async function getProducts(page, search = "", sort = "") {
   try {
-    const products = await fetchProducts(page, search);
+    const products = await fetchProducts(page, search, sort);
     return products;
   } catch (error) {
     throw new Error("Failed to fetch products.");
@@ -36,7 +36,12 @@ async function getProducts(page, search = "") {
 export default async function Products({ searchParams }) {
   const page = Number(searchParams?.page) || 1;
   const searchQuery = searchParams?.search || ""; // Get the search query from URL
-  const { products, currentPage, totalPages } = await getProducts(page, searchQuery);
+  const sortBy = searchParams?.sort || "";
+  const { products, currentPage, totalPages } = await getProducts(
+    page,
+    searchQuery,
+    sortBy
+  );
 
   // const search = searchParams.search || "";
   // const category = searchParams.category || "";
@@ -46,22 +51,22 @@ export default async function Products({ searchParams }) {
 
   return (
     <div>
-      <div className="max-w-[90rem] mx-auto p-8 pb-12 gap-8 sm:p-12 min-h-screen">
-        <div className="flex flex-col md:flex-row justify-between mb-4 gap-4">
+      <div className="bg-white max-w-[90rem] mx-auto p-8 pb-12 gap-8 sm:p-12 min-h-screen">
+        <div className="bg-white flex flex-col md:flex-row justify-between mb-4 gap-4">
           {/* Search Bar */}
           <div className="w-full md:w-2/3">
             <SearchBar initialSearch={searchQuery} />
           </div>
 
           {/* Filter and Sort */}
-          {/* <div className="flex flex-col md:flex-row gap-4 justify-between w-full md:w-auto">
-            <div className="w-full md:w-auto">
+          <div className="flex flex-col md:flex-row gap-4 justify-between w-full md:w-auto">
+            {/* <div className="w-full md:w-auto">
               <CategoryFilter initialCategory={category} />
-            </div>
+            </div> */}
             <div className="w-full md:w-auto">
-              <PriceSort />
+              <PriceSort initialSort={sortBy} />
             </div>
-          </div> */}
+          </div>
         </div>
 
         {/* Reset Button */}
@@ -121,6 +126,7 @@ export default async function Products({ searchParams }) {
           currentPage={currentPage}
           totalPages={totalPages}
           searchQuery={searchQuery}
+          sortBy={sortBy}
         />
       </div>
     </div>
@@ -188,9 +194,9 @@ export default async function Products({ searchParams }) {
 //     </div>
 //   );
 // }
-function Pagination({ currentPage, totalPages, searchQuery }) {
+function Pagination({ currentPage, totalPages, searchQuery, sortBy }) {
   const createPageURL = (pageNumber) => {
-    return `/products?page=${pageNumber}&search=${searchQuery}`;
+    return `/products?page=${pageNumber}&search=${searchQuery}&sort=${sortBy}`;
   };
 
   return (

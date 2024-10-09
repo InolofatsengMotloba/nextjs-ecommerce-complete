@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { FaSortAmountDown } from "react-icons/fa";
 
 /**
@@ -14,42 +14,26 @@ import { FaSortAmountDown } from "react-icons/fa";
  * @component
  * @returns {JSX.Element} The rendered PriceSort component.
  */
-export default function PriceSort() {
-  const [sortOrder, setSortOrder] = useState("");
+export default function PriceSort({ initialSort }) {
+  const [sort, setSort] = useState(initialSort || "default");
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   /**
-   * Sync the sort order state with the URL query parameters on component load.
-   * This effect reads the current sort order from the URL and updates the component state.
-   */
-  useEffect(() => {
-    const order = searchParams.get("order") || "";
-    setSortOrder(order);
-  }, [searchParams]);
-
-  /**
-   * Handle the change in sort order.
-   * When the user selects a sort order (ascending/descending), it updates the URL query parameters
-   * and resets the page to the first page.
+   * Handle sort change when the user selects a different sorting option.
+   * This updates the URL query parameters with the selected sorting option.
    *
-   * @param {Event} event - The change event triggered by selecting a sort option.
+   * @param {Event} e - The change event triggered by selecting a sort option.
    */
   const handleSortChange = (event) => {
-    const selectedOrder = event.target.value;
-    setSortOrder(selectedOrder);
+    const newSort = event.target.value;
+    setSort(newSort); // Update the local state
 
-    // Update the URL search params with the sort order and reset page to 1
-    const params = new URLSearchParams(searchParams);
-    if (selectedOrder === "") {
-      params.delete("sortBy");
-      params.delete("order");
+    // Update the URL with the new sort query, similar to search behavior
+    if (newSort === "default") {
+      router.push("/products");
     } else {
-      params.set("sortBy", "price");
-      params.set("order", selectedOrder);
+      router.push(`/products?page=1&sort=${encodeURIComponent(newSort)}`);
     }
-    params.set("page", "1"); // Reset to first page on sort
-    router.push(`/products?${params.toString()}`);
   };
 
   return (
@@ -58,19 +42,19 @@ export default function PriceSort() {
         <FaSortAmountDown className="text-[#2d7942]" />
         <select
           id="sort"
-          value={sortOrder}
+          value={sort}
           onChange={handleSortChange}
           className="w-52 px-4 py-2 bg-white text-black rounded-full shadow-lg focus:outline-none focus:ring-2 focus:ring-[#2d7942] transition-all duration-300 overflow-hidden"
         >
           <option value="">Sort: Default</option>
           <option
-            value="asc"
+            value="price_asc"
             className="px-4 py-2 hover:bg-[#2d7942] hover:text-white transition-colors duration-300 rounded-md"
           >
             Price: Low to High
           </option>
           <option
-            value="desc"
+            value="price_desc"
             className="px-4 py-2 hover:bg-[#2d7942] hover:text-white transition-colors duration-300 rounded-md"
           >
             Price: High to Low

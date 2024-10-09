@@ -14,11 +14,15 @@
  * @throws {Error} Throws an error if the response is not OK.
  *
  */
-export async function fetchProducts(page = 1, search = "") {
+export async function fetchProducts(page = 1, search = "", sort = "") {
   
   const queryParams = new URLSearchParams({ page: page.toString() });
   if (search) {
     queryParams.append("search", search);
+  }
+
+  if (sort) {
+    queryParams.append("sort", sort);
   }
 
   const res = await fetch(

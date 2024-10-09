@@ -19,9 +19,10 @@ export async function GET(request) {
     const page = parseInt(searchParams.get("page")) || 1;
     const pageSize = 20;
     const searchQuery = searchParams.get("search") || ""; // Get search query from URL
+    const sort = searchParams.get("sort") || "default";
 
     // Check if the data is already cached
-    const cacheKey = `page-${page}-${searchQuery}`;
+    const cacheKey = `page-${page}-${searchQuery}-${sort}`;
     const cachedData = cache.get(cacheKey);
     const now = new Date().getTime();
 
@@ -31,8 +32,17 @@ export async function GET(request) {
 
     const productsRef = collection(db, "products");
 
+    let firestoreQuery = query(productsRef, orderBy("id")); // Default by ID
+
+    // Sorting based on price
+    if (sort === "price_asc") {
+      firestoreQuery = query(productsRef, orderBy("price", "asc"));
+    } else if (sort === "price_desc") {
+      firestoreQuery = query(productsRef, orderBy("price", "desc"));
+    }
+
     // Fetch all products (without pagination or search)
-    const snapshot = await getDocs(query(productsRef, orderBy("id")));
+    const snapshot = await getDocs(firestoreQuery);
     let products = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
