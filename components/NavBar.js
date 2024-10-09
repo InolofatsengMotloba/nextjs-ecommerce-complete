@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/config/firebaseConfig";
 
 export default function NavBar() {
   const [isNavbarVisible, setIsNavbarVisible] = useState(false);
   const pathname = usePathname();
+  const [user, setUser] = useState(null);
 
   const toggleNavbar = () => {
     setIsNavbarVisible(!isNavbarVisible);
@@ -16,7 +19,18 @@ export default function NavBar() {
   const isActive = (route) =>
     pathname === route ? "text-[#2d7942]" : "text-white";
 
-  const isLogin = false;
+  // const isLogin = false;
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <header className="bg-black text-white py-2 sticky top-0 z-50">
@@ -75,7 +89,7 @@ export default function NavBar() {
         </nav>
 
         {/* Login Button */}
-        {!isLogin && (
+        {!user ? (
           <div className="hidden md:block">
             <Link
               href="/login"
@@ -94,9 +108,7 @@ export default function NavBar() {
               Register
             </Link>
           </div>
-        )}
-
-        {isLogin && (
+        ) : (
           <div>
             <Link
               href="/profile"
@@ -107,15 +119,19 @@ export default function NavBar() {
               Profile
             </Link>
             <Link
-              href="/products"
+              href="/logout"
               className={`py-2 px-4 rounded mr-2 hover:bg-gray-500 ${isActive(
-                "/products"
+                "/logout"
               )}`}
             >
               Logout
             </Link>
           </div>
         )}
+
+        {/* {isLogin && (
+          
+        )} */}
       </div>
 
       {/* Mobile Dropdown Menu */}
