@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import { ImageGallery } from "@/components/ImageGallery";
+import AddReviewForm from "@/components/AddReviewForm";
 import { ReviewsSort } from "@/components/SortReviews";
 import { fetchSingleProduct } from "@/api/productsApi";
 
@@ -130,6 +131,9 @@ export default async function ProductDetails({ params }) {
           </div>
         </div>
       </div>
+
+      {/* Add Review Section */}
+      <AddReviewForm productId={id} />
 
       {/* Product Reviews Section */}
       <ReviewsSort reviews={product.reviews} />
