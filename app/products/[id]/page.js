@@ -80,10 +80,10 @@ export default async function ProductDetails({ params }) {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-8">
+    <div className="max-w-5xl mx-auto p-8 bg-white">
       <BackButton />
 
-      <div className="flex flex-col md:flex-row pt-5 mb-6">
+      <div className="flex flex-col md:flex-row pt-5 mb-6 bg-white">
         {/* Product Image */}
         <ImageGallery
           className="mt-6 md:mt-0 md:ml-8 flex-1"
@@ -91,7 +91,7 @@ export default async function ProductDetails({ params }) {
         />
 
         {/* Product Details */}
-        <div className="p-4 mt-6 md:mt-0 md:ml-8 flex-1">
+        <div className="p-4 mt-6 md:mt-0 md:ml-8 flex-1 bg-white">
           <h1 className="text-3xl font-bold mb-1">{product.title}</h1>
           <p className="text-sm text-gray-700 mb-4 border-b-black">
             {product.brand}
