@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaFilter } from "react-icons/fa";
-import { fetchCategories } from "../api/productsApi";
+import { fetchCategories } from "@/api/productsApi";
 
 /**
  * CategoryFilter component that allows users to filter products by category.
@@ -15,7 +15,7 @@ import { fetchCategories } from "../api/productsApi";
  * @component
  * @returns {JSX.Element} The rendered category filter component.
  */
-export function CategoryFilter() {
+export default function CategoryFilter() {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const router = useRouter();
@@ -65,18 +65,12 @@ export function CategoryFilter() {
     } else {
       params.delete("category");
     }
+
+    // Navigate to the new category filter
     params.set("page", "1"); // Reset to first page when changing category
     router.push(`/products?${params.toString()}`);
   };
 
-  // let categories = [];
-
-  // try {
-  //   const fetchedCategories = await fetchCategories();
-  //   categories= fetchedCategories[0].categories
-  // } catch (error) {
-  //   throw new Error("Failed to fetch categories.")
-  // }
   return (
     <div className="mb-4">
       <div className="relative flex items-center space-x-2">

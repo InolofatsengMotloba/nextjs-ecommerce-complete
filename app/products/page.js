@@ -2,7 +2,7 @@ import Link from "next/link";
 import { fetchProducts } from "@/api/productsApi";
 import { SingleImageGallery } from "@/components/ImageGallery";
 import SearchBar from "@/components/SearchBar";
-import { CategoryFilter } from "@/components/FilterProducts";
+import CategoryFilter from "@/components/FilterProducts";
 import PriceSort from "@/components/SortProducts";
 import ResetButton from "@/components/ResetButton";
 
@@ -36,18 +36,14 @@ async function getProducts(page, search = "", sort = "") {
 export default async function Products({ searchParams }) {
   const page = Number(searchParams?.page) || 1;
   const searchQuery = searchParams?.search || ""; // Get the search query from URL
+  const category = searchParams?.category || ""; // Get the category from URL
   const sortBy = searchParams?.sort || "";
   const { products, currentPage, totalPages } = await getProducts(
     page,
     searchQuery,
+    category,
     sortBy
   );
-
-  // const search = searchParams.search || "";
-  // const category = searchParams.category || "";
-  // const sortBy = searchParams.sortBy || "";
-  // const order = searchParams.order || "";
-  // const lastVisible = searchParams.lastVisible || null;
 
   return (
     <div>
@@ -60,9 +56,12 @@ export default async function Products({ searchParams }) {
 
           {/* Filter and Sort */}
           <div className="flex flex-col md:flex-row gap-4 justify-between w-full md:w-auto">
-            {/* <div className="w-full md:w-auto">
-              <CategoryFilter initialCategory={category} />
-            </div> */}
+            <div className="w-full md:w-auto">
+              <CategoryFilter
+                initialCategory={category}
+              
+              />
+            </div>
             <div className="w-full md:w-auto">
               <PriceSort initialSort={sortBy} />
             </div>
@@ -70,7 +69,7 @@ export default async function Products({ searchParams }) {
         </div>
 
         {/* Reset Button */}
-        {/* <ResetButton /> */}
+        <ResetButton />
 
         {/* Product Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
@@ -127,6 +126,7 @@ export default async function Products({ searchParams }) {
           totalPages={totalPages}
           searchQuery={searchQuery}
           sortBy={sortBy}
+          category={category}
         />
       </div>
     </div>
@@ -149,54 +149,15 @@ export default async function Products({ searchParams }) {
  * @returns {JSX.Element} The rendered pagination component with navigation buttons.
  *
  */
-// function Pagination({
-//   currentPage,
-//   searchQuery,
-//   category,
-//   sortBy,
-//   order,
-//   products,
-//   lastVisible,
-// }) {
-//   const pageNumber = parseInt(currentPage, 10);
-//   const prevPage = pageNumber > 1 ? pageNumber - 1 : null;
-//   const nextPage = pageNumber + 1;
-//   const searchParam = searchQuery
-//     ? `&search=${encodeURIComponent(searchQuery)}`
-//     : "";
-//   const categoryParam = category
-//     ? `&category=${encodeURIComponent(category)}`
-//     : "";
-//   const sortParam = sortBy && order ? `&sortBy=${sortBy}&order=${order}` : "";
-//   // const lastVisibleParam = lastVisible ? `&lastVisible=${lastVisible}` : "";
-
-//   return (
-//     <div className="flex justify-center items-center mt-8 space-x-2">
-//       {prevPage && (
-//         <Link
-//           href={`/products?page=${prevPage}${searchParam}${categoryParam}${sortParam}`}
-//         >
-//           <button className="px-4 py-2 bg-[#2d7942] text-white rounded-lg hover:bg-[#1d5931] transition-colors duration-300">
-//             Previous
-//           </button>
-//         </Link>
-//       )}
-//       <span className="text-lg">Page {currentPage}</span>
-//       {products.length === 20 && (
-//         <Link
-//           href={`/products?page=${nextPage}${searchParam}${categoryParam}${sortParam}`}
-//         >
-//           <button className="px-4 py-2 bg-[#2d7942] text-white rounded-lg hover:bg-[#1d5931] transition-colors duration-300">
-//             Next
-//           </button>
-//         </Link>
-//       )}
-//     </div>
-//   );
-// }
-function Pagination({ currentPage, totalPages, searchQuery, sortBy }) {
+function Pagination({
+  currentPage,
+  totalPages,
+  searchQuery,
+  sortBy,
+  category,
+}) {
   const createPageURL = (pageNumber) => {
-    return `/products?page=${pageNumber}&search=${searchQuery}&sort=${sortBy}`;
+    return `/products?page=${pageNumber}&search=${searchQuery}&sort=${sortBy}&category=${category}`;
   };
 
   return (

@@ -14,11 +14,19 @@
  * @throws {Error} Throws an error if the response is not OK.
  *
  */
-export async function fetchProducts(page = 1, search = "", sort = "") {
-  
+export async function fetchProducts(
+  page = 1,
+  search = "",
+  category = "",
+  sort = ""
+) {
   const queryParams = new URLSearchParams({ page: page.toString() });
   if (search) {
     queryParams.append("search", search);
+  }
+
+  if (category) {
+    queryParams.append("category", category);
   }
 
   if (sort) {
@@ -75,7 +83,7 @@ export async function fetchSingleProduct(id) {
  * @returns {Promise<Array<string>>} A promise that resolves to an array of categories as strings.
  */
 export async function fetchCategories() {
-  const res = await fetch("https://next-ecommerce-api.vercel.app/categories", {
+  const res = await fetch("http://localhost:3000/api/categories", {
     cache: "force-cache",
     next: { revalidate: 1800 },
   });

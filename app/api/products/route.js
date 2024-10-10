@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/config/firebaseConfig";
 import Fuse from "fuse.js";
-import { collection, getDocs, query, orderBy } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, where } from "firebase/firestore";
 
 // In-memory cache to store paginated products (expires after 30 minutes)
 const cache = new Map();
@@ -19,6 +19,7 @@ export async function GET(request) {
     const page = parseInt(searchParams.get("page")) || 1;
     const pageSize = 20;
     const searchQuery = searchParams.get("search") || ""; // Get search query from URL
+    const category = searchParams.get("category") || "";
     const sort = searchParams.get("sort") || "default";
 
     // Check if the data is already cached
@@ -33,6 +34,11 @@ export async function GET(request) {
     const productsRef = collection(db, "products");
 
     let firestoreQuery = query(productsRef, orderBy("id")); // Default by ID
+
+    // Filter by category if provided
+    if (category) {
+      firestoreQuery = query(productsRef, where("category", "==", category));
+    }
 
     // Sorting based on price
     if (sort === "price_asc") {
