@@ -14,7 +14,7 @@ export const signUp = async (email, password) => {
     );
     return userCredential.user;
   } catch (error) {
-    throw error;
+    throw new Error("Account Already Exists. Login");
   }
 };
 
@@ -27,7 +27,7 @@ export const signIn = async (email, password) => {
     );
     return userCredential.user;
   } catch (error) {
-    throw error;
+    throw new Error("Please Register before logging in");
   }
 };
 
