@@ -3,14 +3,16 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/config/firebaseConfig";
+import { signOutUser } from "@/config/auth";
 
 export default function NavBar() {
   const [isNavbarVisible, setIsNavbarVisible] = useState(false);
   const pathname = usePathname();
   const [user, setUser] = useState(null);
+  const router = useRouter();
 
   const toggleNavbar = () => {
     setIsNavbarVisible(!isNavbarVisible);
@@ -19,8 +21,7 @@ export default function NavBar() {
   const isActive = (route) =>
     pathname === route ? "text-[#2d7942]" : "text-white";
 
-  // const isLogin = false;
-
+  // Listen for authentication state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -31,6 +32,16 @@ export default function NavBar() {
     });
     return () => unsubscribe();
   }, []);
+
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      await signOutUser(); // Call signOut function
+      router.push("/products"); // Redirect to home after logout
+    } catch (error) {
+      console.error("Error logging out:", error.message);
+    }
+  };
 
   return (
     <header className="bg-black text-white py-2 sticky top-0 z-50">
@@ -88,7 +99,7 @@ export default function NavBar() {
           </Link>
         </nav>
 
-        {/* Login Button */}
+        {/* Login/Logout/Profile Button */}
         {!user ? (
           <div className="hidden md:block">
             <Link
@@ -109,7 +120,7 @@ export default function NavBar() {
             </Link>
           </div>
         ) : (
-          <div>
+          <div className="hidden md:block">
             <Link
               href="/profile"
               className={`py-2 px-4 rounded mr-2 hover:bg-gray-500 ${isActive(
@@ -118,20 +129,14 @@ export default function NavBar() {
             >
               Profile
             </Link>
-            <Link
-              href="/logout"
-              className={`py-2 px-4 rounded mr-2 hover:bg-gray-500 ${isActive(
-                "/logout"
-              )}`}
+            <button
+              onClick={handleLogout}
+              className="py-2 px-4 rounded mr-2 hover:bg-gray-500"
             >
-              Logout
-            </Link>
+              Sign Out
+            </button>
           </div>
         )}
-
-        {/* {isLogin && (
-          
-        )} */}
       </div>
 
       {/* Mobile Dropdown Menu */}
@@ -162,22 +167,45 @@ export default function NavBar() {
                 Cart
               </Link>
             </li>
-            <li>
-              <Link
-                href="/register"
-                className={`text-lg hover:underline ${isActive("/register")}`}
-              >
-                Register
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/login"
-                className={`text-lg hover:underline ${isActive("/login")}`}
-              >
-                Login
-              </Link>
-            </li>
+            {!user ? (
+              <div>
+                <li>
+                  <Link
+                    href="/register"
+                    className={`text-lg hover:underline ${isActive(
+                      "/register"
+                    )}`}
+                  >
+                    Register
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/login"
+                    className={`text-lg hover:underline ${isActive("/login")}`}
+                  >
+                    Login
+                  </Link>
+                </li>
+              </div>
+            ) : (
+              <div>
+                <Link
+                  href="/profile"
+                  className={`text-lg hover:underline ${isActive("/login")}`}
+                >
+                  Profile
+                </Link>
+                <div>
+                  <button
+                    onClick={handleLogout}
+                    className="text-lg hover:underline hover:bg-gray-500"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
+            )}
           </ul>
         </div>
       )}
