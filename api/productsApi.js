@@ -33,13 +33,12 @@ export async function fetchProducts(
     queryParams.append("sort", sort);
   }
 
-  const res = await fetch(
-    `http://localhost:3000/api/products?${queryParams.toString()}`,
-    {
-      cache: "force-cache",
-      next: { revalidate: 1800 },
-    }
-  );
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  const res = await fetch(`${baseUrl}/api/products?${queryParams.toString()}`, {
+    cache: "force-cache",
+    next: { revalidate: 1800 },
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch products.");
@@ -59,7 +58,8 @@ export async function fetchProducts(
  *
  */
 export async function fetchSingleProduct(id) {
-  const res = await fetch(`http://localhost:3000/api/products/${id}`, {
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const res = await fetch(`${baseUrl}/api/products/${id}`, {
     cache: "force-cache",
     next: { revalidate: 1800 },
   });
@@ -83,7 +83,8 @@ export async function fetchSingleProduct(id) {
  * @returns {Promise<Array<string>>} A promise that resolves to an array of categories as strings.
  */
 export async function fetchCategories() {
-  const res = await fetch("http://localhost:3000/api/categories", {
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const res = await fetch(`${baseUrl}/api/categories`, {
     cache: "force-cache",
     next: { revalidate: 1800 },
   });

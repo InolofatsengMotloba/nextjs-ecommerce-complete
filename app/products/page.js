@@ -57,10 +57,7 @@ export default async function Products({ searchParams }) {
           {/* Filter and Sort */}
           <div className="flex flex-col md:flex-row gap-4 justify-between w-full md:w-auto">
             <div className="w-full md:w-auto">
-              <CategoryFilter
-                initialCategory={category}
-              
-              />
+              <CategoryFilter initialCategory={category} />
             </div>
             <div className="w-full md:w-auto">
               <PriceSort initialSort={sortBy} />
@@ -206,5 +203,4 @@ function Pagination({
       </nav>
     </div>
   );
-
 }
