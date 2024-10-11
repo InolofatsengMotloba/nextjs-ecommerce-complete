@@ -37,7 +37,6 @@ export default function NavBar() {
   const handleLogout = async () => {
     try {
       await signOutUser(); // Call signOut function
-      router.push("/products"); // Redirect to home after logout
     } catch (error) {
       console.error("Error logging out:", error.message);
     }
