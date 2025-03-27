@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/config/firebaseConfig";
+import { auth } from "@/lib/firebaseConfig";
 import { signOutUser } from "@/config/auth";
 
 export default function NavBar() {

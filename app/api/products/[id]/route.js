@@ -1,4 +1,4 @@
-import { db } from "@/config/firebaseConfig";
+import { db } from "@/lib/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 
 // Async function to handle the product details request

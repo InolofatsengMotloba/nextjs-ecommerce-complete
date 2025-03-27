@@ -1,4 +1,4 @@
-import { db } from "@/config/firebaseConfig";
+import { db } from "@/lib/firebaseConfig";
 import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 

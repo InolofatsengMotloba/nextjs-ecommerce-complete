@@ -3,7 +3,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { auth } from "./firebaseConfig";
+import { auth } from "../lib/firebaseConfig";
 
 export const signUp = async (email, password) => {
   try {
