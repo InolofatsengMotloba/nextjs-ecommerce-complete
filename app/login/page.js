@@ -90,7 +90,7 @@ export default function Login() {
 
         {/* Don't have an account link */}
         <p className="mt-4 text-center text-gray-600">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link
             href="/register"
             className="text-[#2d7942] hover:underline transition duration-150 ease-in-out"

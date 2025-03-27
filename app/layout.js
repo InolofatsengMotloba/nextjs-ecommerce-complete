@@ -1,7 +1,15 @@
 import "./globals.css";
+import { Nerko_One } from "next/font/google";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/AuthContext";
+
+// Configure the Nerko One font
+const nerkoOne = Nerko_One({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata = {
   title: "Her Store",
@@ -11,7 +19,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={nerkoOne.className}>
       <head>
         {/* Meta data */}
 
@@ -44,12 +52,6 @@ export default function RootLayout({ children }) {
         <meta
           property="twitter:image"
           content="https://metatags.io/images/meta-tags.png"
-        />
-
-        {/* Fonts */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Nerko+One&display=swap"
-          rel="stylesheet"
         />
 
         {/* Favicon */}
