@@ -23,7 +23,7 @@ export async function GET(request) {
     const sort = searchParams.get("sort") || "default";
 
     // Check if the data is already cached
-    const cacheKey = `page-${page}-${searchQuery}-${sort}`;
+    const cacheKey = `page-${page}-${searchQuery}-${category}-${sort}`;
     const cachedData = cache.get(cacheKey);
     const now = new Date().getTime();
 
@@ -35,19 +35,24 @@ export async function GET(request) {
 
     let firestoreQuery = query(productsRef, orderBy("id")); // Default by ID
 
-    // Filter by category if provided
+    // Apply category filter first if provided
     if (category) {
-      firestoreQuery = query(productsRef, where("category", "==", category));
+      firestoreQuery = query(firestoreQuery, where("category", "==", category));
     }
 
-    // Sorting based on price
-    if (sort === "price_asc") {
-      firestoreQuery = query(productsRef, orderBy("price", "asc"));
-    } else if (sort === "price_desc") {
-      firestoreQuery = query(productsRef, orderBy("price", "desc"));
+    // Apply sorting
+    switch (sort) {
+      case "price_asc":
+        firestoreQuery = query(firestoreQuery, orderBy("price", "asc"));
+        break;
+      case "price_desc":
+        firestoreQuery = query(firestoreQuery, orderBy("price", "desc"));
+        break;
+      default:
+        firestoreQuery = query(firestoreQuery, orderBy("id"));
     }
 
-    // Fetch all products (without pagination or search)
+    // Fetch all products that match the query
     const snapshot = await getDocs(firestoreQuery);
     let products = snapshot.docs.map((doc) => ({
       id: doc.id,
@@ -60,9 +65,9 @@ export async function GET(request) {
       products = fuse.search(searchQuery).map((result) => result.item);
     }
 
-    const totalCount = products.length; // Calculate total count after filtering
+    const totalCount = products.length;
 
-    // Apply pagination to the filtered products
+    // Apply pagination to the filtered and sorted products
     const paginatedProducts = paginateProducts(products, page, pageSize);
 
     const response = {
@@ -72,10 +77,12 @@ export async function GET(request) {
       totalCount,
     };
 
+    // Cache the response
     cache.set(cacheKey, { timestamp: now, data: response });
 
     return NextResponse.json(response, { status: 200 });
   } catch (error) {
+    console.error("Product fetch error:", error);
     return NextResponse.json(
       { error: "Failed to fetch products", details: error.message },
       { status: 500 }
