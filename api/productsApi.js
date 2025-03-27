@@ -35,16 +35,23 @@ export async function fetchProducts(
 
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  const res = await fetch(`${baseUrl}/api/products?${queryParams.toString()}`, {
-    cache: "force-cache",
-    next: { revalidate: 1800 },
-  });
+  try {
+    const res = await fetch(`${baseUrl}/api/products?${queryParams.toString()}`, {
+      cache: "force-cache",
+      next: { revalidate: 1800 },
+    });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch products.");
+    if (!res.ok) {
+      // Include more details about the error
+      const errorBody = await res.text();
+      throw new Error(`Failed to fetch products. Status: ${res.status}, Body: ${errorBody}`);
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Fetch products error:', error);
+    throw error;
   }
-
-  return res.json();
 }
 
 /**
