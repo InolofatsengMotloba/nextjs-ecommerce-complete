@@ -16,7 +16,7 @@ export async function GET() {
     }));
 
     // Wrap the categories in an object with a 'categories' key
-    return new Response(JSON.stringify([{ categories }]), { status: 200 });
+    return new Response(JSON.stringify({ categories }), { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch categories", details: error.message },

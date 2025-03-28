@@ -8,7 +8,7 @@ import ResetButton from "@/components/ResetButton";
 
 async function getProducts(page, search = "", category = "", sort = "") {
   try {
-    const products = await fetchProducts(page, search, sort);
+    const products = await fetchProducts(page, search, category, sort);
     return products;
   } catch (error) {
     throw new Error("Failed to fetch products.");

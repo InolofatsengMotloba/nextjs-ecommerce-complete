@@ -38,14 +38,14 @@ export default function CategoryFilter() {
     async function loadCategories() {
       try {
         const fetchedCategories = await fetchCategories();
-        if (fetchedCategories && fetchedCategories[0] && fetchedCategories[0].categories) {
-          setCategories(fetchedCategories[0].categories);
+        if (fetchedCategories && fetchedCategories.categories.length > 0) {
+          setCategories(fetchedCategories.categories[0].categories);
         } else {
-          console.warn('No categories found');
+          console.warn("No categories found");
           setCategories([]);
         }
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
         setCategories([]);
       }
     }
