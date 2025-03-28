@@ -12,12 +12,11 @@ export async function GET() {
 
     // Process the documents into an array
     const categories = snapshot.docs.map((doc) => ({
-      // id: doc.id,
       ...doc.data(),
     }));
 
-    // Return the categories as a JSON response
-    return new Response(JSON.stringify(categories), { status: 200 });
+    // Wrap the categories in an object with a 'categories' key
+    return new Response(JSON.stringify([{ categories }]), { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to fetch categories", details: error.message },

@@ -6,7 +6,7 @@ import CategoryFilter from "@/components/FilterProducts";
 import PriceSort from "@/components/SortProducts";
 import ResetButton from "@/components/ResetButton";
 
-async function getProducts(page, search = "", sort = "") {
+async function getProducts(page, search = "", category = "", sort = "") {
   try {
     const products = await fetchProducts(page, search, sort);
     return products;

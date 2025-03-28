@@ -22,44 +22,43 @@ export async function GET(request) {
     const category = searchParams.get("category") || "";
     const sort = searchParams.get("sort") || "default";
 
-    // Check if the data is already cached
+    // Check if data is cached
     const cacheKey = `page-${page}-${searchQuery}-${category}-${sort}`;
     const cachedData = cache.get(cacheKey);
-    const now = new Date().getTime();
+    const now = Date.now();
 
     if (cachedData && now - cachedData.timestamp < CACHE_DURATION) {
       return NextResponse.json(cachedData.data, { status: 200 });
     }
 
+    // Firestore collection reference
     const productsRef = collection(db, "products");
 
-    let firestoreQuery = query(productsRef, orderBy("id")); // Default by ID
+    // Construct query constraints dynamically
+    const constraints = [];
 
-    // Apply category filter first if provided
     if (category) {
-      firestoreQuery = query(firestoreQuery, where("category", "==", category));
+      constraints.push(where("category", "==", category));
     }
 
-    // Apply sorting
-    switch (sort) {
-      case "price_asc":
-        firestoreQuery = query(firestoreQuery, orderBy("price", "asc"));
-        break;
-      case "price_desc":
-        firestoreQuery = query(firestoreQuery, orderBy("price", "desc"));
-        break;
-      default:
-        firestoreQuery = query(firestoreQuery, orderBy("id"));
+    // Apply sorting based on the selected option
+    if (sort === "price_asc") {
+      constraints.push(orderBy("price", "asc"));
+    } else if (sort === "price_desc") {
+      constraints.push(orderBy("price", "desc"));
     }
 
-    // Fetch all products that match the query
+    // Create Firestore query with constraints
+    const firestoreQuery = query(productsRef, ...constraints);
+
+    // Fetch matching products
     const snapshot = await getDocs(firestoreQuery);
     let products = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
 
-    // Perform fuzzy search if there's a search query
+    // Apply fuzzy search if a search query is provided
     if (searchQuery) {
       const fuse = new Fuse(products, fuseOptions);
       products = fuse.search(searchQuery).map((result) => result.item);
@@ -67,9 +66,10 @@ export async function GET(request) {
 
     const totalCount = products.length;
 
-    // Apply pagination to the filtered and sorted products
+    // Apply pagination
     const paginatedProducts = paginateProducts(products, page, pageSize);
 
+    // Prepare response
     const response = {
       products: paginatedProducts,
       currentPage: page,
@@ -77,7 +77,7 @@ export async function GET(request) {
       totalCount,
     };
 
-    // Cache the response
+    // Cache response
     cache.set(cacheKey, { timestamp: now, data: response });
 
     return NextResponse.json(response, { status: 200 });
@@ -90,7 +90,7 @@ export async function GET(request) {
   }
 }
 
-// Function to paginate the filtered products
+// Pagination function
 function paginateProducts(products, page, pageSize) {
   const startIndex = (page - 1) * pageSize;
   return products.slice(startIndex, startIndex + pageSize);
