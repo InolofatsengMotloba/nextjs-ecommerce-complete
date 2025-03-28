@@ -159,11 +159,11 @@ function Pagination({
 
   return (
     <div className="flex justify-center mt-8">
-      <nav className="inline-flex space-x-1">
+      <nav className="flex flex-wrap items-center gap-1 overflow-x-auto max-w-full px-4">
         {/* Previous Button */}
         <Link
           href={createPageURL(currentPage - 1)}
-          className={`px-4 py-2 rounded-full bg-[#2d7942] text-white text-sm font-medium transition-colors duration-200 ${
+          className={`px-3 py-2 rounded-full bg-[#2d7942] text-white text-sm font-medium transition-colors duration-200 ${
             currentPage === 1
               ? "text-gray-300 cursor-not-allowed bg-gray-200"
               : "hover:bg-[#11752d]"
@@ -174,24 +174,72 @@ function Pagination({
         </Link>
 
         {/* Page Numbers */}
-        {[...Array(totalPages).keys()].map((page) => (
-          <Link
-            key={page + 1}
-            href={createPageURL(page + 1)}
-            className={`px-4 py-2 rounded-full border text-sm font-medium transition-colors duration-200 ${
-              currentPage === page + 1
-                ? "bg-[#2d7942] text-white border-transparent"
-                : "bg-white text-black border-gray-300 hover:bg-gray-100"
-            }`}
-          >
-            {page + 1}
-          </Link>
-        ))}
+        {totalPages > 7 ? (
+          <>
+            {currentPage > 3 && (
+              <>
+                <Link
+                  href={createPageURL(1)}
+                  className="px-3 py-2 rounded-full border text-sm font-medium"
+                >
+                  1
+                </Link>
+                {currentPage > 4 && (
+                  <span className="px-2 text-gray-500">...</span>
+                )}
+              </>
+            )}
+
+            {Array.from({ length: 5 }, (_, i) => currentPage - 2 + i)
+              .filter((page) => page > 0 && page <= totalPages)
+              .map((page) => (
+                <Link
+                  key={page}
+                  href={createPageURL(page)}
+                  className={`px-3 py-2 rounded-full border text-sm font-medium transition-colors duration-200 ${
+                    currentPage === page
+                      ? "bg-[#2d7942] text-white border-transparent"
+                      : "bg-white text-black border-gray-300 hover:bg-gray-100"
+                  }`}
+                >
+                  {page}
+                </Link>
+              ))}
+
+            {currentPage < totalPages - 3 && (
+              <>
+                {currentPage < totalPages - 3 && (
+                  <span className="px-2 text-gray-500">...</span>
+                )}
+                <Link
+                  href={createPageURL(totalPages)}
+                  className="px-3 py-2 rounded-full border text-sm font-medium"
+                >
+                  {totalPages}
+                </Link>
+              </>
+            )}
+          </>
+        ) : (
+          [...Array(totalPages).keys()].map((page) => (
+            <Link
+              key={page + 1}
+              href={createPageURL(page + 1)}
+              className={`px-3 py-2 rounded-full border text-sm font-medium transition-colors duration-200 ${
+                currentPage === page + 1
+                  ? "bg-[#2d7942] text-white border-transparent"
+                  : "bg-white text-black border-gray-300 hover:bg-gray-100"
+              }`}
+            >
+              {page + 1}
+            </Link>
+          ))
+        )}
 
         {/* Next Button */}
         <Link
           href={createPageURL(currentPage + 1)}
-          className={`px-4 py-2 rounded-full bg-[#2d7942] text-white text-sm font-medium transition-colors duration-200 ${
+          className={`px-3 py-2 rounded-full bg-[#2d7942] text-white text-sm font-medium transition-colors duration-200 ${
             currentPage === totalPages
               ? "text-gray-300 cursor-not-allowed bg-gray-200"
               : "hover:bg-[#11752d]"
