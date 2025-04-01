@@ -3,12 +3,13 @@ import { doc, getDoc } from "firebase/firestore";
 
 // Async function to handle the product details request
 export async function GET(req, { params }) {
-  // Extract the product ID from the URL parameters
+  // Extract and format the product ID
   const { id } = params;
+  const formattedId = id.padStart(3, "0"); // Convert "1" to "001"
 
   try {
     // Reference the product document in Firestore using the padded ID
-    const productRef = doc(db, "products", id);
+    const productRef = doc(db, "products", formattedId);
     const productSnap = await getDoc(productRef);
 
     // Check if the product document exists

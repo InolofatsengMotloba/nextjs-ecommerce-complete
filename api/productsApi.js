@@ -36,20 +36,25 @@ export async function fetchProducts(
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
   try {
-    const res = await fetch(`${baseUrl}/api/products?${queryParams.toString()}`, {
-      cache: "force-cache",
-      next: { revalidate: 1800 },
-    });
+    const res = await fetch(
+      `${baseUrl}/api/products?${queryParams.toString()}`,
+      {
+        cache: "force-cache",
+        next: { revalidate: 1800 },
+      }
+    );
 
     if (!res.ok) {
       // Include more details about the error
       const errorBody = await res.text();
-      throw new Error(`Failed to fetch products. Status: ${res.status}, Body: ${errorBody}`);
+      throw new Error(
+        `Failed to fetch products. Status: ${res.status}, Body: ${errorBody}`
+      );
     }
 
     return res.json();
   } catch (error) {
-    console.error('Fetch products error:', error);
+    console.error("Fetch products error:", error);
     throw error;
   }
 }
@@ -66,16 +71,21 @@ export async function fetchProducts(
  */
 export async function fetchSingleProduct(id) {
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-  const res = await fetch(`${baseUrl}/api/products/${id}`, {
-    cache: "force-cache",
-    next: { revalidate: 1800 },
-  });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch products.");
+  try {
+    const res = await fetch(`${baseUrl}/api/products/${id}`, {
+      cache: "force-cache",
+      next: { revalidate: 1800 },
+    });
+
+    if (!res.ok) {
+      throw new Error(`Failed to fetch product ${id}: ${res.status}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    throw error;
   }
-
-  return res.json();
 }
 
 /**
