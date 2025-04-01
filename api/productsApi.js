@@ -70,20 +70,28 @@ export async function fetchProducts(
  *
  */
 export async function fetchSingleProduct(id) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
+  // Default to empty string if undefined
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+  
+  // Log for debugging in production
+  console.log(`Fetching product ${id} from ${baseUrl}/api/products/${id}`);
+  
   try {
     const res = await fetch(`${baseUrl}/api/products/${id}`, {
-      cache: "force-cache",
+      cache: "no-store", // Temporarily disable caching for debugging
       next: { revalidate: 1800 },
     });
 
     if (!res.ok) {
-      throw new Error(`Failed to fetch product ${id}: ${res.status}`);
+      const errorData = await res.json().catch(() => ({}));
+      console.error(`API Error: ${res.status}`, errorData);
+      throw new Error(`Failed to fetch product ${id}: ${res.status} ${JSON.stringify(errorData)}`);
     }
 
-    return await res.json();
+    const data = await res.json();
+    return data;
   } catch (error) {
+    console.error(`Fetch error for product ${id}:`, error);
     throw error;
   }
 }

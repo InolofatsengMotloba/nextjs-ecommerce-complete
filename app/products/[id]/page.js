@@ -3,6 +3,7 @@ import { ImageGallery } from "@/components/ImageGallery";
 import AddReviewForm from "@/components/AddReviewForm";
 import { ReviewsSort } from "@/components/SortReviews";
 import { fetchSingleProduct } from "@/api/productsApi";
+import { notFound } from "next/navigation";
 
 /**
  * Dynamically imports the BackButton component.
@@ -75,68 +76,84 @@ export default async function ProductDetails({ params }) {
 
   try {
     product = await fetchSingleProduct(paddedId);
-  } catch (error) {
-    throw error;
-  }
 
-  return (
-    <div className="max-w-5xl mx-auto p-8 bg-white">
-      <BackButton />
+    if (!product || Object.keys(product).length === 0) {
+      return notFound();
+    }
 
-      <div className="flex flex-col md:flex-row pt-5 mb-6 bg-white">
-        {/* Product Image */}
-        <ImageGallery
-          className="mt-6 md:mt-0 md:ml-8 flex-1"
-          images={product.images}
-        />
+    return (
+      <div className="max-w-5xl mx-auto p-8 bg-white">
+        <BackButton />
 
-        {/* Product Details */}
-        <div className="p-4 mt-6 md:mt-0 md:ml-8 flex-1 bg-white">
-          <h1 className="text-3xl font-bold mb-1">{product.title}</h1>
-          <p className="text-sm text-gray-700 mb-4 border-b-black">
-            {product.brand}
-          </p>
+        <div className="flex flex-col md:flex-row pt-5 mb-6 bg-white">
+          {/* Product Image */}
+          <ImageGallery
+            className="mt-6 md:mt-0 md:ml-8 flex-1"
+            images={product.images}
+          />
 
-          <p className="text-base text-gray-700 mb-2">{product.description}</p>
-          <p className="text-lg text-gray-700 mb-2 border-b-black font-semibold">
-            {product.category}
-          </p>
-          <div className="flex flex-wrap justify-between items-center mb-3">
-            <button
-              className={`text-sm font-medium ${
-                product.stock > 0
-                  ? "text-white bg-[#2d7942] px-2 py-1 rounded-md"
-                  : "text-white bg-red-600 px-2 py-1 rounded-md"
-              }`}
-            >
-              {product.stock > 0 ? "In stock" : "Out of stock"}
-            </button>
-            <p className="text-xl font-bold">$ {product.price}</p>
-          </div>
+          {/* Product Details */}
+          <div className="p-4 mt-6 md:mt-0 md:ml-8 flex-1 bg-white">
+            <h1 className="text-3xl font-bold mb-1">{product.title}</h1>
+            <p className="text-sm text-gray-700 mb-4 border-b-black">
+              {product.brand}
+            </p>
 
-          <p className="text-base text-black font-semibold mb-2">
-            Rating: {product.rating}
-          </p>
-
-          <div className="flex flex-wrap items-center mb-4">
-            <h3 className="mr-2 font-semibold">Tags:</h3>
-            {product.tags.map((tag, index) => (
+            <p className="text-base text-gray-700 mb-2">
+              {product.description}
+            </p>
+            <p className="text-lg text-gray-700 mb-2 border-b-black font-semibold">
+              {product.category}
+            </p>
+            <div className="flex flex-wrap justify-between items-center mb-3">
               <button
-                key={index}
-                className="border-2 font-bold border-black bg-white text-black m-1 px-2 py-1 rounded-md"
+                className={`text-sm font-medium ${
+                  product.stock > 0
+                    ? "text-white bg-[#2d7942] px-2 py-1 rounded-md"
+                    : "text-white bg-red-600 px-2 py-1 rounded-md"
+                }`}
               >
-                {tag}
+                {product.stock > 0 ? "In stock" : "Out of stock"}
               </button>
-            ))}
+              <p className="text-xl font-bold">$ {product.price}</p>
+            </div>
+
+            <p className="text-base text-black font-semibold mb-2">
+              Rating: {product.rating}
+            </p>
+
+            <div className="flex flex-wrap items-center mb-4">
+              <h3 className="mr-2 font-semibold">Tags:</h3>
+              {product.tags.map((tag, index) => (
+                <button
+                  key={index}
+                  className="border-2 font-bold border-black bg-white text-black m-1 px-2 py-1 rounded-md"
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
+
+        {/* Add Review Section */}
+        <AddReviewForm productId={id} />
+
+        {/* Product Reviews Section */}
+        <ReviewsSort reviews={product.reviews} />
       </div>
-
-      {/* Add Review Section */}
-      <AddReviewForm productId={id} />
-
-      {/* Product Reviews Section */}
-      <ReviewsSort reviews={product.reviews} />
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    // Redirect to error page or show error state
+    return (
+      <div className="max-w-5xl mx-auto p-8 bg-white">
+        <BackButton />
+        <div className="text-center py-12">
+          <h1 className="text-2xl font-bold mb-4">Error Loading Product</h1>
+          <p>We couldn't load this product. Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
 }
