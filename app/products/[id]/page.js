@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { ImageGallery } from "@/components/ImageGallery";
-import AddReviewForm from "@/components/AddReviewForm";
-import { ReviewsSort } from "@/components/SortReviews";
+// import AddReviewForm from "@/components/AddReviewForm";
+// import { ReviewsSort } from "@/components/SortReviews";
 import { fetchSingleProduct } from "@/api/productsApi";
 import { notFound } from "next/navigation";
 
@@ -137,10 +137,10 @@ export default async function ProductDetails({ params }) {
         </div>
 
         {/* Add Review Section */}
-        <AddReviewForm productId={id} />
+        {/* <AddReviewForm productId={id} /> */}
 
         {/* Product Reviews Section */}
-        <ReviewsSort reviews={product.reviews} />
+        {/* <ReviewsSort reviews={product.reviews} /> */}
       </div>
     );
   } catch (error) {
