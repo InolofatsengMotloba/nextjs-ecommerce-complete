@@ -70,28 +70,37 @@ export async function fetchProducts(
  *
  */
 export async function fetchSingleProduct(id) {
-  // Default to empty string if undefined
   const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-  
-  // Log for debugging in production
-  console.log(`Fetching product ${id} from ${baseUrl}/api/products/${id}`);
   
   try {
     const res = await fetch(`${baseUrl}/api/products/${id}`, {
-      cache: "no-store", // Temporarily disable caching for debugging
-      next: { revalidate: 1800 },
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
 
     if (!res.ok) {
+      // Handle 404 specifically
+      if (res.status === 404) {
+        return null; // Return null for notFound() to work
+      }
+      
       const errorData = await res.json().catch(() => ({}));
       console.error(`API Error: ${res.status}`, errorData);
-      throw new Error(`Failed to fetch product ${id}: ${res.status} ${JSON.stringify(errorData)}`);
+      throw new Error(`Failed to fetch product: ${res.status}`);
     }
 
     const data = await res.json();
+    
+    // Ensure data is properly formatted
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid product data format');
+    }
+    
     return data;
   } catch (error) {
-    console.error(`Fetch error for product ${id}:`, error);
+    console.error(`Network error fetching product ${id}:`, error);
     throw error;
   }
 }

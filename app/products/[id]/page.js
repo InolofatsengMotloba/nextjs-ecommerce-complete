@@ -1,7 +1,5 @@
 import dynamic from "next/dynamic";
 import { ImageGallery } from "@/components/ImageGallery";
-// import AddReviewForm from "@/components/AddReviewForm";
-// import { ReviewsSort } from "@/components/SortReviews";
 import { fetchSingleProduct } from "@/api/productsApi";
 import { notFound } from "next/navigation";
 
@@ -37,18 +35,27 @@ export async function generateMetadata({ params }) {
   // Pad the ID to ensure it is in the correct format
   const paddedId = id.toString().padStart(3, "0");
 
-  let product;
-
   try {
-    product = await fetchSingleProduct(paddedId);
-  } catch (error) {
-    throw error;
-  }
+    const product = await fetchSingleProduct(paddedId);
 
-  return {
-    title: `${product.title} - Her Store`,
-    description: product.description,
-  };
+    if (!product) {
+      return {
+        title: "Product Not Found - Her Store",
+        description: "The product you're looking for doesn't exist.",
+      };
+    }
+
+    return {
+      title: `${product.title} - Her Store`,
+      description: product.description,
+    };
+  } catch (error) {
+    console.error("Error generating metadata:", error);
+    return {
+      title: "Product Page - Her Store",
+      description: "View product details",
+    };
+  }
 }
 
 /**
@@ -68,17 +75,21 @@ export async function generateMetadata({ params }) {
  */
 export default async function ProductDetails({ params }) {
   const { id } = params;
-
   // Pad the ID to ensure it is in the correct format
   const paddedId = id.toString().padStart(3, "0");
 
-  let product;
-
   try {
-    product = await fetchSingleProduct(paddedId);
+    const product = await fetchSingleProduct(paddedId);
 
-    if (!product || Object.keys(product).length === 0) {
+    // Handle not found case
+    if (!product) {
       return notFound();
+    }
+
+    // Validate required product fields
+    if (!product.images || !product.title || !product.description) {
+      console.error("Invalid product data structure:", product);
+      throw new Error("Invalid product data structure");
     }
 
     return (
@@ -96,15 +107,16 @@ export default async function ProductDetails({ params }) {
           <div className="p-4 mt-6 md:mt-0 md:ml-8 flex-1 bg-white">
             <h1 className="text-3xl font-bold mb-1">{product.title}</h1>
             <p className="text-sm text-gray-700 mb-4 border-b-black">
-              {product.brand}
+              {product.brand || "No brand specified"}
             </p>
 
             <p className="text-base text-gray-700 mb-2">
               {product.description}
             </p>
             <p className="text-lg text-gray-700 mb-2 border-b-black font-semibold">
-              {product.category}
+              {product.category || "Uncategorized"}
             </p>
+
             <div className="flex flex-wrap justify-between items-center mb-3">
               <button
                 className={`text-sm font-medium ${
@@ -115,24 +127,26 @@ export default async function ProductDetails({ params }) {
               >
                 {product.stock > 0 ? "In stock" : "Out of stock"}
               </button>
-              <p className="text-xl font-bold">$ {product.price}</p>
+              <p className="text-xl font-bold">$ {product.price || "N/A"}</p>
             </div>
 
             <p className="text-base text-black font-semibold mb-2">
-              Rating: {product.rating}
+              Rating: {product.rating || "Not rated"}
             </p>
 
-            <div className="flex flex-wrap items-center mb-4">
-              <h3 className="mr-2 font-semibold">Tags:</h3>
-              {product.tags.map((tag, index) => (
-                <button
-                  key={index}
-                  className="border-2 font-bold border-black bg-white text-black m-1 px-2 py-1 rounded-md"
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
+            {product.tags && product.tags.length > 0 && (
+              <div className="flex flex-wrap items-center mb-4">
+                <h3 className="mr-2 font-semibold">Tags:</h3>
+                {product.tags.map((tag, index) => (
+                  <button
+                    key={index}
+                    className="border-2 font-bold border-black bg-white text-black m-1 px-2 py-1 rounded-md"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -144,14 +158,20 @@ export default async function ProductDetails({ params }) {
       </div>
     );
   } catch (error) {
-    console.error("Error fetching product:", error);
-    // Redirect to error page or show error state
+    console.error("Error in ProductDetails:", error);
+
+    // For specific errors, you might want to redirect to notFound
+    if (error.message.includes("404") || error.message.includes("not found")) {
+      return notFound();
+    }
+
     return (
       <div className="max-w-5xl mx-auto p-8 bg-white">
         <BackButton />
         <div className="text-center py-12">
           <h1 className="text-2xl font-bold mb-4">Error Loading Product</h1>
           <p>We couldn't load this product. Please try again later.</p>
+          <p className="text-sm text-gray-500 mt-2">Error: {error.message}</p>
         </div>
       </div>
     );
