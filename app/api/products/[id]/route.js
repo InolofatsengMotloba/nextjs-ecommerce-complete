@@ -3,7 +3,7 @@ import { db } from "@/lib/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 
 export async function GET(request, { params }) {
-  const { id } = params; // Extract product ID
+  const { id } = params; // Extract product ID from URL (1, 2, 3, etc.)
 
   if (!id) {
     return NextResponse.json(
@@ -13,7 +13,8 @@ export async function GET(request, { params }) {
   }
 
   try {
-    const productRef = doc(db, "products", id);
+    // Fetch the product document using the Firestore document ID (001, 002, 003, etc.)
+    const productRef = doc(db, "products", id.padStart(3, "0")); // Ensure the ID is 3 digits (001, 002, etc.)
     const productSnap = await getDoc(productRef);
 
     if (!productSnap.exists()) {
