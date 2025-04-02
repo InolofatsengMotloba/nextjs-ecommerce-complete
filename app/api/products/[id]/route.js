@@ -1,13 +1,17 @@
-// app/api/products/[id]/route.js
 import { db } from "@/lib/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 
 export async function GET(req, { params }) {
   const { id } = params;
-  console.log("Received ID:", id); // Debug log
 
-  const formattedId = id.padStart(3, "0");
-  console.log("Formatted ID:", formattedId); // Debug log
+  let formattedId;
+  if (!isNaN(id)) {
+    formattedId = String(id).padStart(3, "0");
+  } else {
+    formattedId = id;
+  }
+
+  console.log("Looking up document with ID:", formattedId);
 
   try {
     const productRef = doc(db, "products", formattedId);
@@ -22,7 +26,7 @@ export async function GET(req, { params }) {
     }
 
     const data = productSnap.data();
-    console.log("Product data:", data); // Debug log
+    console.log("Product data:", data); 
 
     // Ensure the data is serializable
     const serializableData = JSON.parse(JSON.stringify(data));

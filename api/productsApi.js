@@ -70,14 +70,18 @@ export async function fetchProducts(
  *
  */
 export async function fetchSingleProduct(id) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
-  
+  // Use absolute URL in production, relative in development
+  const baseUrl =
+    typeof window !== "undefined" && process.env.NODE_ENV === "production"
+      ? window.location.origin
+      : process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
   try {
     const res = await fetch(`${baseUrl}/api/products/${id}`, {
-      cache: 'no-store',
+      cache: "no-store",
       headers: {
-        'Content-Type': 'application/json'
-      }
+        "Content-Type": "application/json",
+      },
     });
 
     if (!res.ok) {
@@ -85,19 +89,19 @@ export async function fetchSingleProduct(id) {
       if (res.status === 404) {
         return null; // Return null for notFound() to work
       }
-      
+
       const errorData = await res.json().catch(() => ({}));
       console.error(`API Error: ${res.status}`, errorData);
       throw new Error(`Failed to fetch product: ${res.status}`);
     }
 
     const data = await res.json();
-    
+
     // Ensure data is properly formatted
-    if (!data || typeof data !== 'object') {
-      throw new Error('Invalid product data format');
+    if (!data || typeof data !== "object") {
+      throw new Error("Invalid product data format");
     }
-    
+
     return data;
   } catch (error) {
     console.error(`Network error fetching product ${id}:`, error);

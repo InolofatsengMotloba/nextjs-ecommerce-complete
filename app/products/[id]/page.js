@@ -31,12 +31,19 @@ const BackButton = dynamic(() => import("@/components/BackButton"), {
  */
 export async function generateMetadata({ params }) {
   const { id } = params;
+  console.log("Generating metadata for ID:", id);
 
   // Pad the ID to ensure it is in the correct format
   const paddedId = id.toString().padStart(3, "0");
+  console.log("Padded ID for metadata:", paddedId);
 
   try {
     const product = await fetchSingleProduct(paddedId);
+
+    console.log(
+      "Metadata fetch result:",
+      product ? "Product found" : "Product not found"
+    );
 
     if (!product) {
       return {
@@ -75,11 +82,18 @@ export async function generateMetadata({ params }) {
  */
 export default async function ProductDetails({ params }) {
   const { id } = params;
+  console.log("Rendering product details for ID:", id); // Add logging
+
   // Pad the ID to ensure it is in the correct format
   const paddedId = id.toString().padStart(3, "0");
+  console.log("Padded ID for details:", paddedId); // Add logging
 
   try {
     const product = await fetchSingleProduct(paddedId);
+    console.log(
+      "Product fetch result:",
+      product ? "Product found" : "Product not found"
+    );
 
     // Handle not found case
     if (!product) {
