@@ -70,52 +70,17 @@ export async function fetchProducts(
  *
  */
 export async function fetchSingleProduct(id) {
-  console.log("fetchSingleProduct called with ID:", id);
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+  const res = await fetch(`${baseUrl}/api/products/${id}`, {
+    cache: "force-cache",
+    next: { revalidate: 1800 },
+  });
 
-  // Use absolute URL in production, relative in development
-  const baseUrl =
-    typeof window !== "undefined" && process.env.NODE_ENV === "production"
-      ? window.location.origin
-      : process.env.NEXT_PUBLIC_API_BASE_URL || "";
-
-  const url = `${baseUrl}/api/products/${id}`;
-  console.log("Fetching from URL:", url);
-
-  try {
-    const res = await fetch(url, {
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-
-    console.log("Fetch response status:", res.status);
-
-    if (!res.ok) {
-      // Handle 404 specifically
-      if (res.status === 404) {
-        console.log("Product not found (404)");
-        return null; // Return null for notFound() to work
-      }
-
-      const errorData = await res.json().catch(() => ({}));
-      console.error(`API Error: ${res.status}`, errorData);
-      throw new Error(`Failed to fetch product: ${res.status}`);
-    }
-
-    const data = await res.json();
-    console.log("Product data received with keys:", Object.keys(data));
-
-    // Ensure data is properly formatted
-    if (!data || typeof data !== "object") {
-      throw new Error("Invalid product data format");
-    }
-
-    return data;
-  } catch (error) {
-    console.error(`Network error fetching product ${id}:`, error);
-    throw error;
+  if (!res.ok) {
+    throw new Error("Failed to fetch products.");
   }
+
+  return res.json();
 }
 
 /**
