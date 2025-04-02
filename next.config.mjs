@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  trailingSlash: true,
+  trailingSlash: false,
 
   webpack: (config, { dev, isServer }) => {
     console.log("Next.js build config:", { dev, isServer });
