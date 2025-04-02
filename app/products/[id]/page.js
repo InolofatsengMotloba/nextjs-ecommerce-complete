@@ -84,6 +84,12 @@ export default async function ProductDetails({ params }) {
   const { id } = params;
   console.log("Rendering product details for ID:", id); // Add logging
 
+   console.log("Environment:", {
+     nodeEnv: process.env.NODE_ENV,
+     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
+     serverComponent: typeof window === "undefined",
+   });
+
   // Pad the ID to ensure it is in the correct format
   const paddedId = id.toString().padStart(3, "0");
   console.log("Padded ID for details:", paddedId); // Add logging

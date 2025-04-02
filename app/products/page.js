@@ -108,6 +108,7 @@ export default async function Products({ searchParams }) {
 
                 <Link
                   href={`/products/${product.id}`}
+                  prefetch={false}
                   className="flex text-black justify-center mt-3 bg-white px-3 py-2 text-sm font-semibold hover:text-[#2d7942]"
                 >
                   <span>View Details →</span>
