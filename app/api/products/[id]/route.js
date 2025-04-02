@@ -1,49 +1,31 @@
+import { NextResponse } from "next/server";
 import { db } from "@/lib/firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 
-export async function GET(req, { params }) {
-  const { id } = params;
-  console.log("API route - Received ID:", id);
+export async function GET(request, { params }) {
+  const { id } = params; // Extract product ID
 
-  let formattedId = id;
-  // If the ID is numeric, pad it to match your Firestore document IDs
-  if (!isNaN(id)) {
-    formattedId = String(id).padStart(3, "0");
+  if (!id) {
+    return NextResponse.json(
+      { error: "Product ID is required" },
+      { status: 400 }
+    );
   }
 
-  console.log("API route - Looking up document with ID:", formattedId);
-
   try {
-    const productRef = doc(db, "products", formattedId);
+    const productRef = doc(db, "products", id);
     const productSnap = await getDoc(productRef);
 
     if (!productSnap.exists()) {
-      console.log("API route - Product not found:", formattedId);
-      return new Response(JSON.stringify({ error: "Product not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    const data = productSnap.data();
-    console.log("API route - Product found with data keys:", Object.keys(data));
-
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json(productSnap.data(), { status: 200 });
   } catch (error) {
-    console.error("API route - Error fetching product:", error);
-    return new Response(
-      JSON.stringify({
-        error: "Failed to fetch product",
-        message: error.message,
-        stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
-      }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+    console.error("Error fetching product:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch product", details: error.message },
+      { status: 500 }
     );
   }
 }
